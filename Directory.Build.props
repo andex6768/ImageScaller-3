@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <MonoMod_CheckTargetRuntime>false</MonoMod_CheckTargetRuntime>
+  </PropertyGroup>
+</Project>

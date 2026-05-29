@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ImageScaller3.ViewModels"
+        x:Class="ImageScaller3.Views.ProgressBarWindow"
+        x:DataType="vm:ProgressBarViewModel"
+        Title="Обработка" Width="400" Height="150"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+	
+	<StackPanel Margin="20" VerticalAlignment="Center" Spacing="15">
+		<!-- Текст текущего статуса -->
+		<TextBlock Text="{Binding ProgressBarName}" HorizontalAlignment="Center"/>
+		
+		<!-- Полоса загрузки -->
+		<ProgressBar Minimum="0" Maximum="100" 
+		             Value="{Binding CurrentProgress}" 
+		             ShowProgressText="True"
+		             Height="25"/>
+					 <TextBlock Text="{Binding ProgressText}" HorizontalAlignment="Center"/>
+	</StackPanel>
+</Window>

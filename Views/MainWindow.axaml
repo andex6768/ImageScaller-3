@@ -1,0 +1,243 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ImageScaller3.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ImageScaller3.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/ImageScaller3Logo.ico"
+        Title="ImageScaller3">
+
+    <Design.DataContext>
+
+
+        <!-- This only sets the DataContext for the previewer in an IDE,
+        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <!-- Создаем шаблон для NumericUpDown (назовем его NumberField) -->
+        <Style Selector="NumericUpDown.NumberField">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="1000"/>
+            <Setter Property="ParsingNumberStyle" Value="Integer"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="ClipValueToMinMax" Value="True"/>
+            <Setter Property="ShowButtonSpinner" Value="False"/>
+            <Setter Property="PlaceholderText" Value="0"/>
+        </Style>
+    </Window.Styles>
+
+
+
+    <Grid ColumnDefinitions="*, 2*">
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10" Spacing="10">
+
+                <TextBlock Text="Левая прокручиваемая панель" FontSize="16"/>
+                <Button Content="Выберите папку с картинками"
+                        Background="#F16A35"
+                        CommandParameter="{Binding $parent[Window]}"
+                        Command="{Binding LoadImagesFromDiskCommand }"/>
+                <Border Background="#4E4E4E"
+                        CornerRadius="15"
+                        Padding="10"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        HorizontalAlignment="Left"
+                        MaxHeight="250"
+                        MaxWidth="250"
+                        MinWidth="250"
+                        MinHeight="50"
+                        VerticalAlignment="Top">
+
+                    <TextBlock Margin="0,-9,0,10" TextWrapping="Wrap" FontStyle="Italic" Text="{Binding ImagesPath}" /> </Border>
+
+
+
+                <Border Background="#735656"
+                        CornerRadius="15"
+                        Padding="20"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        HorizontalAlignment="Left"
+                        MaxHeight="250"
+                        MaxWidth="250"
+                        MinWidth="250"
+                        VerticalAlignment="Top">
+
+                    <StackPanel Margin="0,-9,0,10">
+
+
+                        <TextBlock TextWrapping="Wrap" Margin="-12,0,0,12"  Text="Интервал между картинками (горизонтально)"/>
+
+                        <NumericUpDown Margin="-120,-9,0,10" Classes="NumberField" Value="{Binding SpacingWithImagesHorizontal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock  TextWrapping="Wrap" Margin="-12,0,0,12" Text="Интервал между картинками (вертикально)"/>
+
+                        <NumericUpDown Margin="-120,-9,0,10" Classes="NumberField" Value="{Binding SpacingWithImagesVertical, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock TextWrapping="Wrap" Margin="-12,0,0,12" Text="Количество картинок в ряду"/>
+
+                        <NumericUpDown Margin="-120,-9,0,-18" Classes="NumberField" Value="{Binding ImagesInRow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                       PlaceholderText="3"
+                                       />
+                    </StackPanel>
+
+                </Border>
+
+                <!-- Розширенные настройки -->
+                <Border Background="#2130A4"
+                        CornerRadius="15"
+                        Padding="20"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        HorizontalAlignment="Left"
+                        MaxHeight="600"
+                        MaxWidth="250"
+                        MinWidth="250"
+                        VerticalAlignment="Top">
+
+                    <StackPanel Margin="0,-9,0,10" >
+                        <CheckBox Margin="-10,-9,0,10" Name="ActivationCheck"
+                                  Content="Использовать расширенные настройки"
+                                  IsChecked="{Binding IsExtended}"/>
+                        <TextBlock IsVisible="{Binding IsExtended}" TextWrapping="Wrap" Margin="-12,0,0,12"  Text="Привести все картинки к размеру"/>
+
+                        <ComboBox IsVisible="{Binding IsExtended}"  Margin="-12,0,0,0" x:Name="ScaleToImageSelector"
+                                  HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding ScaleToImageOptions}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  IsEnabled="{Binding IsExtended}"
+                                  SelectedItem="{Binding SelectedScaleToImageOption}">
+
+                        </ComboBox>
+
+                        <!-- Пользовательские настройки масштабирования -->
+
+                        <Border Background="#27BD6B"
+                                CornerRadius="15"
+                                Padding="20"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                HorizontalAlignment="Left"
+                                MaxHeight="600"
+                                MaxWidth="250"
+                                MinWidth="230"
+                                MinHeight=" 110"
+                                Margin="-16,-40,0,0"
+                                ZIndex="-1"
+                                IsVisible="{Binding IsCustomScaleSettings}"
+                                VerticalAlignment="Top">
+
+                            <StackPanel Margin="0,25,0,0">
+
+                                <TextBlock IsVisible="{Binding IsCustomScaleSettings}"
+                                           TextWrapping="Wrap"
+                                           Margin="-12,0,0,12"
+                                           Text="Размер картинки в атласе по горизонтали"/>
+
+                                <NumericUpDown IsVisible="{Binding IsCustomScaleSettings}"
+                                               Margin ="-120,-9,0,10"
+                                               Classes ="NumberField"
+                                               Minimum ="2"
+                                               Maximum ="8000"
+                                               PlaceholderText = "2"
+                                                  ParsingNumberStyle = "Integer"
+                                               Value="{Binding CustomImageSizeHorizontal,
+                                               Mode=TwoWay}"/>
+
+                                <TextBlock IsVisible="{Binding IsCustomScaleSettings}"
+                                           TextWrapping="Wrap"
+                                           Margin="-12,-5,-12,12"
+                                           Text="Размер картинки в атласе по вертикали"/>
+
+                                <NumericUpDown IsVisible="{Binding IsCustomScaleSettings}"
+                                               Margin ="-120,-9,0,0"
+                                               Classes ="NumberField"
+                                               Minimum ="2"
+                                               Maximum ="8000"
+                                               PlaceholderText = "2"
+                                               ParsingNumberStyle = "Integer"
+                                               Value="{Binding CustomImageSizeVertical,
+                                               Mode=TwoWay
+                                             }"/>
+                            </StackPanel>
+                        </Border>
+
+
+
+                        <TextBlock IsVisible="{Binding ShowInterpolationSettings}" TextWrapping="Wrap" Margin="-12,7,0,12"  Text="Режим интерполяции"/>
+
+                        <ComboBox IsVisible="{Binding ShowInterpolationSettings}"  Margin="-12,0,0,-12" x:Name="FilterSelector"
+                                  HorizontalAlignment="Stretch"
+                                  IsEnabled="{Binding ShowInterpolationSettings}"
+                                  ItemsSource="{Binding FilterOptions}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  ToolTip.Tip="{Binding SelectedFilter.Description}"
+                                  SelectedItem="{Binding SelectedFilter}">
+                            <!--
+                            По желанию: можно настроить, как именно отображать текст в списке.
+                            По умолчанию Avalonia просто вызовет .ToString() (выведет "Lanczos", "Bilinear" и т.д.)
+                            -->
+                        </ComboBox>
+
+
+
+
+
+                    </StackPanel>
+                </Border>
+
+                <Button Content="Сгенерировать Атлас"
+                        Command="{Binding GenerateAtlasCommand}"
+                        IsEnabled="{Binding IsAtlasReadyToGenerate}"
+
+                        Background="#1EBE12"
+
+                        />
+                <Button Content="Сохранить Атлас"
+                        IsEnabled="{Binding IsAtlasReadyToSave}"
+                        Command="{Binding SaveAtlasCommand}"
+                        CommandParameter="{Binding $parent[Window]}"
+                        Background="Blue"
+
+                        />
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <!--Зона с примером атласа -->
+
+        <Grid Grid.Column="1" RowDefinitions="Auto, *" Margin="10">
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center"
+                       Text="Предпросмотр атласа" Margin="0,0,0,10"/>
+
+            <Border Grid.Row="1" Background="#4E4E4E"
+                    CornerRadius="15"
+                    Padding="10"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    HorizontalAlignment="Center"
+                    MaxHeight="4000"
+                    MaxWidth="4000"
+                    MinWidth="50"
+                    MinHeight="50"
+                    VerticalAlignment="Top">
+                <Image  Source="{Binding Atlas}"
+                       Stretch="Uniform"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            </Border>
+
+        </Grid>
+
+
+    </Grid>
+
+
+</Window>
+
+
